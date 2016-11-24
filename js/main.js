@@ -2,8 +2,10 @@ var ball, lives;
 var cursors;
 var leftKey;
 var scrollback;
-var rect, rectGroup;
-var game = new Phaser.Game(480, 320, Phaser.AUTO, null, {
+var rect, rects;
+var score = 0;
+var txt;
+var game = new Phaser.Game(780, 420, Phaser.AUTO, null, {
     preload: preload, create: create, update: update
 });
 function preload() {
@@ -17,19 +19,34 @@ function preload() {
 
 }
 function create() {
+    
     game.physics.startSystem(Phaser.Physics.ARCADE);
     cursors = game.input.keyboard.createCursorKeys();
     //game.physics.arcade.checkCollision.down = false;
-    scrollback = game.add.tileSprite(0,0,480,320,'scrollback');
+    scrollback = game.add.tileSprite(0,0,780,420,'scrollback');
+    txt = game.add.text(0,0,"Score: "+ score);
+    txt.fontSize = 24;
+    txt.fill = "white";
     ballAttrs();
-    //rectGroup = this.game.add.group();
+    rects = this.game.add.group();
+    rects.enableBody = true;
     rect = game.add.sprite(150, 155, 'rect');
     rect2 = game.add.sprite(350, 355, 'rect');
     rect3 = game.add.sprite(320, 560, 'rect');
     rect.anchor.set(0.5,1);
+    game.physics.enable(rect3,Phaser.Physics.ARCADE);
+
+    // var top = 67;
+    // for (i = 0; i <= 5; i++) {
+    //   createLedge(getRandomLeft(), top);
+    //   top += 67;
+    // }
+    
 }
 function update() {
-    game.physics.arcade.collide(ball, rect);
+    score += .2;
+    txt.setText("Score: "+ parseInt(score));
+    game.physics.arcade.collide(rect3, ball);
     //scrollback.tilePosition.y += 2;
     //ball.x = game.input.x || game.world.width*0.5;
     if (cursors.left.isDown)
@@ -47,6 +64,8 @@ function update() {
     rect2.y -= 1;
     rect3.y -= 1;
 
+   
+
 }
 
 function randomRects(){
@@ -56,14 +75,25 @@ function randomRects(){
 }
 
 function ballAttrs(){
-    ball = game.add.sprite(5, 5, 'ball');
+    
+    ball = game.add.sprite(game.world.width/2, game.world.height/2-10, 'ball');
     game.physics.enable(ball, Phaser.Physics.ARCADE);
-    ball.body.velocity.y = 10;
-    ball.body.gravity.y= 9.8;
-    //ball.body.collideWorldBounds = true;
-    //ball.body.bounce.set(1);
+    //ball.body.velocity.y = 150;
+    //ball.body.gravity.y= 100;
+    ball.body.collideWorldBounds = true;
+    
+    //no se que hace el anchor
+    ball.anchor.set(0.5);
+    
+    ball.body.bounce.set(1);
     ball.checkWorldBounds = true;
     ball.outOfBoundsKill = true;
     ball.body.allowGravity = false;
 
-}
+
+};
+
+function rectAttrs(){
+
+};
+
